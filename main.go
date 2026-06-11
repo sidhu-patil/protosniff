@@ -28,3 +28,15 @@ func AddGRPCHeader(protoBytes []byte) []byte {
 	binary.BigEndian.PutUint32(header[1:5], uint32(len(protoBytes)))
 	return append(header, protoBytes...)
 }
+
+func RemoveGRPCHeader(protoBytes []byte) []byte {
+
+	if len(protoBytes) >= 5 {
+		msgLen := binary.BigEndian.Uint32(protoBytes[1:5])
+		if int(msgLen) == len(protoBytes)-5 {
+			protoBytes = protoBytes[5:]
+		}
+	}
+
+	return protoBytes
+}
