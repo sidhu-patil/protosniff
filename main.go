@@ -3,6 +3,7 @@ package protosniff
 import (
 	"encoding/binary"
 	"encoding/hex"
+	"fmt"
 )
 
 func DecodeProto(content []byte) (map[string]any, error) {
@@ -39,4 +40,24 @@ func RemoveGRPCHeader(protoBytes []byte) []byte {
 	}
 
 	return protoBytes
+}
+
+func GetMapValue(m map[string]any, keys ...string) (any, error) {
+	var cur any = m
+
+	for _, key := range keys {
+		obj, ok := cur.(map[string]any)
+		if !ok {
+			return nil, fmt.Errorf("'%s': not a map", key)
+		}
+
+		val, exists := obj[key]
+		if !exists {
+			return nil, fmt.Errorf("key '%s' not found", key)
+		}
+
+		cur = val
+	}
+
+	return cur, nil
 }
